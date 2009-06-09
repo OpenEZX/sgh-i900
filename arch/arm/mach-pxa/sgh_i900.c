@@ -23,7 +23,7 @@
 #include <mach/hardware.h>
 #include <mach/audio.h>
 #include <mach/pxafb.h>
-#include <mach/sgh_i900.h>
+#include <mach/zylonite.h>
 #include <mach/mmc.h>
 #include <mach/ohci.h>
 
@@ -91,17 +91,17 @@ static struct platform_device sgh_i900_backlight_device = {
 };
 
 static struct pxafb_mode_info toshiba_ltm035a776c_mode = {
-	.pixclock		= 110000,
+	.pixclock		= 96153,
 	.xres			= 240,
-	.yres			= 480,
+	.yres			= 400,
 	.bpp			= 16,
-	.hsync_len		= 4,
-	.left_margin		= 6,
-	.right_margin		= 4,
-	.vsync_len		= 2,
-	.upper_margin		= 2,
-	.lower_margin		= 3,
-	.sync			= FB_SYNC_VERT_HIGH_ACT,
+	.hsync_len		= 8,
+	.left_margin		= 8,
+	.right_margin		= 8,
+	.vsync_len		= 4,
+	.upper_margin		= 38,
+	.lower_margin		= 38,
+	.sync			= 0, //FB_SYNC_VERT_HIGH_ACT,
 };
 
 static struct pxafb_mach_info sgh_i900_toshiba_lcd_info = {
@@ -227,10 +227,6 @@ static inline void sgh_i900_init_ohci(void) {}
 
 static void __init sgh_i900_init(void)
 {
-	/* board-processor specific initialization */
-	sgh_i900_pxa300_init();
-	sgh_i900_pxa320_init();
-
 	pxa_set_ac97_info(NULL);
 	sgh_i900_init_lcd();
 	sgh_i900_init_mmc();

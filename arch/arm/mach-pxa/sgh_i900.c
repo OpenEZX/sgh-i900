@@ -157,7 +157,6 @@ static struct pxamci_platform_data sgh_i900_mci2_platform_data = {
 
 static void __init sgh_i900_init_mmc(void)
 {
-	/* Setup all three MMC slots available on PXA31x */
 	pxa_set_mci_info(&sgh_i900_mci_platform_data);
 	pxa3xx_set_mci2_info(&sgh_i900_mci2_platform_data);
 	pxa3xx_set_mci3_info(&sgh_i900_mci_platform_data);

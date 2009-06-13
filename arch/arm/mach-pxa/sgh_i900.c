@@ -21,11 +21,9 @@
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
 #include <mach/hardware.h>
-#include <mach/audio.h>
 #include <mach/pxafb.h>
 #include <mach/zylonite.h>
 #include <mach/mmc.h>
-#include <mach/ohci.h>
 
 #include "devices.h"
 #include "generic.h"
@@ -33,50 +31,9 @@
 #define MAX_SLOTS	3
 struct platform_mmc_slot sgh_i900_mmc_slot[MAX_SLOTS];
 
-int gpio_debug_led1;
-int gpio_debug_led2;
-
-int wm9713_irq;
-
-#if defined(CONFIG_LEDS_GPIO) || defined(CONFIG_LEDS_GPIO_MODULE)
-static struct gpio_led sgh_i900_debug_leds[] = {
-	[0] = {
-		.name			= "sgh_i900:yellow:1",
-		.default_trigger	= "heartbeat",
-	},
-	[1] = {
-		.name			= "sgh_i900:yellow:2",
-		.default_trigger	= "default-on",
-	},
-};
-
-static struct gpio_led_platform_data sgh_i900_debug_leds_info = {
-	.leds		= sgh_i900_debug_leds,
-	.num_leds	= ARRAY_SIZE(sgh_i900_debug_leds),
-};
-
-static struct platform_device sgh_i900_device_leds = {
-	.name		= "leds-gpio",
-	.id		= -1,
-	.dev		= {
-		.platform_data = &sgh_i900_debug_leds_info,
-	}
-};
-
-static void __init sgh_i900_init_leds(void)
-{
-	sgh_i900_debug_leds[0].gpio = gpio_debug_led1;
-	sgh_i900_debug_leds[1].gpio = gpio_debug_led2;
-
-	platform_device_register(&sgh_i900_device_leds);
-}
-#else
-static inline void sgh_i900_init_leds(void) {}
-#endif
-
 #if defined(CONFIG_FB_PXA) || defined(CONFIG_FB_PXA_MODULE)
 static struct platform_pwm_backlight_data sgh_i900_backlight_data = {
-	.pwm_id		= 3,
+	.pwm_id			= 3,
 	.max_brightness	= 100,
 	.dft_brightness	= 100,
 	.pwm_period_ns	= 10000,
@@ -90,21 +47,21 @@ static struct platform_device sgh_i900_backlight_device = {
 	},
 };
 
-static struct pxafb_mode_info toshiba_ltm035a776c_mode = {
+static struct pxafb_mode_info sgh_i900_mode = {
 	.pixclock		= 96153,
 	.xres			= 240,
 	.yres			= 400,
 	.bpp			= 16,
 	.hsync_len		= 8,
-	.left_margin		= 8,
-	.right_margin		= 8,
+	.left_margin	= 8,
+	.right_margin	= 8,
 	.vsync_len		= 4,
-	.upper_margin		= 38,
-	.lower_margin		= 38,
-	.sync			= 0, //FB_SYNC_VERT_HIGH_ACT,
+	.upper_margin	= 38,
+	.lower_margin	= 38,
+	.sync			= 0,
 };
 
-static struct pxafb_mach_info sgh_i900_toshiba_lcd_info = {
+static struct pxafb_mach_info sgh_i900_lcd_info = {
 	.num_modes		= 1,
 	.lcd_conn		= LCD_COLOR_TFT_16BPP | LCD_PCLK_EDGE_FALL,
 };
@@ -113,9 +70,9 @@ static void __init sgh_i900_init_lcd(void)
 {
 	platform_device_register(&sgh_i900_backlight_device);
 
-	sgh_i900_toshiba_lcd_info.modes = &toshiba_ltm035a776c_mode;
+	sgh_i900_lcd_info.modes = &sgh_i900_mode;
 
-	set_pxa_fb_info(&sgh_i900_toshiba_lcd_info);
+	set_pxa_fb_info(&sgh_i900_lcd_info);
 }
 #else
 static inline void sgh_i900_init_lcd(void) {}
@@ -201,45 +158,27 @@ static struct pxamci_platform_data sgh_i900_mci2_platform_data = {
 
 static void __init sgh_i900_init_mmc(void)
 {
+	/* Setup all three MMC slots available on PXA31x */
 	pxa_set_mci_info(&sgh_i900_mci_platform_data);
 	pxa3xx_set_mci2_info(&sgh_i900_mci2_platform_data);
-	if (cpu_is_pxa310())
-		pxa3xx_set_mci3_info(&sgh_i900_mci_platform_data);
+	pxa3xx_set_mci3_info(&sgh_i900_mci_platform_data);
 }
 #else
 static inline void sgh_i900_init_mmc(void) {}
 #endif
 
-#if defined(CONFIG_USB_OHCI_HCD) || defined(CONFIG_USB_OHCI_HCD_MODULE)
-static struct pxaohci_platform_data sgh_i900_ohci_info = {
-	.port_mode	= PMM_PERPORT_MODE,
-	.flags		= ENABLE_PORT1 | ENABLE_PORT2 |
-			  POWER_CONTROL_LOW | POWER_SENSE_LOW,
-};
-
-static void __init sgh_i900_init_ohci(void)
-{
-	pxa_set_ohci_info(&sgh_i900_ohci_info);
-}
-#else
-static inline void sgh_i900_init_ohci(void) {}
-#endif /* CONFIG_USB_OHCI_HCD || CONFIG_USB_OHCI_HCD_MODULE */
-
 static void __init sgh_i900_init(void)
 {
-	pxa_set_ac97_info(NULL);
 	sgh_i900_init_lcd();
 	sgh_i900_init_mmc();
-	sgh_i900_init_leds();
-	sgh_i900_init_ohci();
 }
 
 MACHINE_START(SGH_I900, "Samsung SGH-i900 (Omnia) phone")
-	.phys_io	= 0x40000000,
+	.phys_io		= 0x40000000,
 	.boot_params	= 0xa0000100,
 	.io_pg_offst	= (io_p2v(0x40000000) >> 18) & 0xfffc,
-	.map_io		= pxa_map_io,
-	.init_irq	= pxa3xx_init_irq,
-	.timer		= &pxa_timer,
+	.map_io			= pxa_map_io,
+	.init_irq		= pxa3xx_init_irq,
+	.timer			= &pxa_timer,
 	.init_machine	= sgh_i900_init,
 MACHINE_END

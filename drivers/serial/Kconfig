@@ -1401,6 +1401,16 @@ config SERIAL_BFIN_SPORT
 	  To compile this driver as a module, choose M here: the
 	  module will be called bfin_sport_uart.
 
+config SERIAL_SGH_MODEM
+	tristate "Samsung SGH-i900 GSM/UMTS Modem"
+	depends on ARM
+	select SERIAL_CORE
+	help
+	  Enable the MSM6281 modem on SGH-i900.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called sgh_modem.
+
 choice
 	prompt "Baud rate for Blackfin SPORT UART"
 	depends on SERIAL_BFIN_SPORT

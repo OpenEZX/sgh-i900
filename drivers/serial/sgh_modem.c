@@ -30,13 +30,6 @@
 #include <asm/irq.h>
 #include <asm/dma.h>
 
-#include <plat/regs-spi.h>
-#include <plat/regs-dma.h>
-
-#include <mach/dma.h>
-#include <mach/spi.h>
-#include <mach/regs-gpio.h>
-#include <mach/regs-clock.h>
 #include <mach/hardware.h>
 
 #include <linux/delay.h>
@@ -189,7 +182,7 @@ static int sgh_modem_verify_port(struct uart_port *port,
 {
 	struct sgh_modem *sgh = port_to_modem(port);
 	dev_dbg(&sgh->pdev->dev, "verify_port()\n");
-	if (ser->type != PORT_UNKNOWN && ser->type != PORT_GFISH)
+	if (ser->type != PORT_UNKNOWN && ser->type != PORT_SGH)
 		return -EINVAL;
 
 	return 0;
@@ -283,9 +276,8 @@ static int __init sgh_probe(struct platform_device *pdev)
 	}
 
 	sgh->port.dev = &pdev->dev;
-	sgh->port.irq = sgh->irq;
 	sgh->port.type = PORT_SGH;
-	sgh->port.membase = sgh->ioarea->start;
+	//sgh->port.membase = sgh->ioarea->start;
 	sgh->port.fifosize = 1;
 	sgh->port.ops = &sgh_uart_ops;
 	rc = uart_add_one_port(&sgh_uart_driver, &sgh->port);
@@ -294,48 +286,15 @@ static int __init sgh_probe(struct platform_device *pdev)
 		goto out_driver;
 	}
 
-	rc = request_irq(sgh->irq, sgh_modem_irq,
-			 IRQF_TRIGGER_RISING|IRQF_TRIGGER_FALLING,
-			 pdev->name, sgh);
-	if (rc) {
-		dev_err(&pdev->dev, "Cannot claim IRQ\n");
-		goto out_port;
-	}
-	enable_irq_wake(sgh->irq);
-
-	rc = request_irq(sgh->irq, s3c24xx_spi_irq, 0,
-			 "sgh_modem SPI slave", sgh);
-	if (rc) {
-		dev_err(&pdev->dev, "Cannot claim IRQ\n");
-		goto out_irq;
-	}
-
-	rc = device_create_file(&pdev->dev, &dev_attr_tx_atz);
-	if (rc < 0) {
-		dev_err(&pdev->dev, "failed to add sysfs file\n");
-		goto out_irq2;
-	}
-
 	return 0;
 
-out_file:
-	device_remove_file(&pdev->dev, &dev_attr_tx_atz);
-out_irq2:
-	free_irq(sgh->spi.irq, sgh);
-out_irq:
-	disable_irq_wake(sgh->irq);
-	free_irq(sgh->irq, sgh);
-out_port:
 	uart_remove_one_port(&sgh_uart_driver, &sgh->port);
 out_driver:
 	uart_unregister_driver(&sgh_uart_driver);
 out_clk:
-	clk_put(sgh->spi.clk);
-out_remap:
-	iounmap(sgh->spi.regs);
 out_reqmem:
-	release_resource(sgh->spi.ioarea);
-	kfree(sgh->spi.ioarea);
+	release_resource(sgh->ioarea);
+	kfree(sgh->ioarea);
 out_free:
 	platform_set_drvdata(pdev, NULL);
 	kfree(sgh);
@@ -347,8 +306,6 @@ static int sgh_remove(struct platform_device *pdev)
 {
 	struct sgh_modem *sgh = platform_get_drvdata(pdev);
 
-	device_remove_file(&pdev->dev, &dev_attr_tx_atz);
-	free_irq(sgh->irq, sgh);
 	uart_remove_one_port(&sgh_uart_driver, &sgh->port);
 	uart_unregister_driver(&sgh_uart_driver);
 	iounmap(sgh->regs);
@@ -381,6 +338,6 @@ static void sgh_exit(void)
 module_init(sgh_init);
 module_exit(sgh_exit);
 
-MODULE_LICENSE("GPLv2");
+MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Stefan Schmidt <stefan@datenfreihafen.org>");
 MODULE_DESCRIPTION("Samsung SGH-i900 GSM/UMTS modem driver");

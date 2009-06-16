@@ -171,6 +171,9 @@
 /* Timberdale UART */
 #define PORT_TIMBUART	87
 
+/* SGH-i900 Modem */
+#define PORT_SGH		88
+
 #ifdef __KERNEL__
 
 #include <linux/compiler.h>

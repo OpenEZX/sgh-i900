@@ -62,7 +62,6 @@ config HAVE_LATENCYTOP_SUPPORT
 
 config TRACE_IRQFLAGS_SUPPORT
 	bool
-	depends on PPC64
 	default y
 
 config LOCKDEP_SUPPORT
@@ -90,10 +89,6 @@ config ARCH_HAS_ILOG2_U64
 	default y if 64BIT
 
 config GENERIC_HWEIGHT
-	bool
-	default y
-
-config GENERIC_CALIBRATE_DELAY
 	bool
 	default y
 
@@ -129,6 +124,8 @@ config PPC
 	select USE_GENERIC_SMP_HELPERS if SMP
 	select HAVE_OPROFILE
 	select HAVE_SYSCALL_WRAPPERS if PPC64
+	select GENERIC_ATOMIC64 if PPC32
+	select HAVE_PERF_COUNTERS
 
 config EARLY_PRINTK
 	bool

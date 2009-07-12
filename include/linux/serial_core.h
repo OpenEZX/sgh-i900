@@ -171,8 +171,11 @@
 /* Timberdale UART */
 #define PORT_TIMBUART	87
 
+/* Qualcomm MSM SoCs */
+#define PORT_MSM	88
+
 /* SGH-i900 Modem */
-#define PORT_SGH		88
+#define PORT_SGH	89
 
 #ifdef __KERNEL__
 

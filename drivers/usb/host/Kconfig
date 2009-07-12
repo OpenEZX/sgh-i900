@@ -17,6 +17,26 @@ config USB_C67X00_HCD
 	  To compile this driver as a module, choose M here: the
 	  module will be called c67x00.
 
+config USB_XHCI_HCD
+	tristate "xHCI HCD (USB 3.0) support (EXPERIMENTAL)"
+	depends on USB && PCI && EXPERIMENTAL
+	---help---
+	  The eXtensible Host Controller Interface (xHCI) is standard for USB 3.0
+	  "SuperSpeed" host controller hardware.
+
+	  To compile this driver as a module, choose M here: the
+	  module will be called xhci-hcd.
+
+config USB_XHCI_HCD_DEBUGGING
+	bool "Debugging for the xHCI host controller"
+	depends on USB_XHCI_HCD
+	---help---
+	  Say 'Y' to turn on debugging for the xHCI host controller driver.
+	  This will spew debugging output, even in interrupt context.
+	  This should only be used for debugging xHCI driver bugs.
+
+	  If unsure, say N.
+
 config USB_EHCI_HCD
 	tristate "EHCI HCD (USB 2.0) support"
 	depends on USB && USB_ARCH_HAS_EHCI
@@ -317,10 +337,10 @@ config USB_R8A66597_HCD
 
 config SUPERH_ON_CHIP_R8A66597
 	boolean "Enable SuperH on-chip R8A66597 USB"
-	depends on USB_R8A66597_HCD && (CPU_SUBTYPE_SH7366 || CPU_SUBTYPE_SH7723)
+	depends on USB_R8A66597_HCD && (CPU_SUBTYPE_SH7366 || CPU_SUBTYPE_SH7723 || CPU_SUBTYPE_SH7724)
 	help
 	   This driver enables support for the on-chip R8A66597 in the
-	   SH7366 and SH7723 processors.
+	   SH7366, SH7723 and SH7724 processors.
 
 config USB_WHCI_HCD
 	tristate "Wireless USB Host Controller Interface (WHCI) driver (EXPERIMENTAL)"

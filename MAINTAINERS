@@ -861,6 +861,14 @@ F:	arch/arm/mach-rpc/
 F:	drivers/net/arm/ether*
 F:	drivers/scsi/arm/
 
+ARM/SAMSUNG SGH i900 MACHINE SUPPORT (Omnia)
+P:	Stefan Schmidt
+M:	stefan@datenfreihafen.org
+W:	http://gnufiish.org/trac/wiki/Samsung_Omnia
+S:	Maintained
+T:	git git://git.openezx.org/sgh-i900.git
+F:	arch/arm/mach-pxa/sgh_i900.c
+
 ARM/SHARK MACHINE SUPPORT
 P:	Alexander Schulz
 M:	alex@shark-linux.de

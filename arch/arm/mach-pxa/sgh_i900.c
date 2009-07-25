@@ -16,7 +16,6 @@
 
 #include <asm/mach-types.h>
 #include <asm/mach/arch.h>
-#include <mach/pxafb.h>
 #include <mach/zylonite.h>
 #include <mach/mmc.h>
 #include <mach/hardware.h>

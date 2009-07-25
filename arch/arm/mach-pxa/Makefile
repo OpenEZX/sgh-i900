@@ -70,6 +70,7 @@ ifeq ($(CONFIG_MACH_ZYLONITE),y)
   obj-$(CONFIG_CPU_PXA300)	+= zylonite_pxa300.o
   obj-$(CONFIG_CPU_PXA320)	+= zylonite_pxa320.o
 endif
+obj-$(CONFIG_MACH_SGH_i900)	+= sgh_i900.o
 obj-$(CONFIG_MACH_LITTLETON)	+= littleton.o
 obj-$(CONFIG_MACH_TAVOREVB)	+= tavorevb.o
 obj-$(CONFIG_MACH_SAAR)		+= saar.o

@@ -32,7 +32,7 @@ struct platform_mmc_slot sgh_i900_mmc_slot[MAX_SLOTS];
 
 #if defined(CONFIG_FB_PXA) || defined(CONFIG_FB_PXA_MODULE)
 static struct platform_pwm_backlight_data sgh_i900_backlight_data = {
-	.pwm_id			= 3,
+	.pwm_id		= 3,
 	.max_brightness	= 100,
 	.dft_brightness	= 100,
 	.pwm_period_ns	= 10000,
@@ -47,17 +47,17 @@ static struct platform_device sgh_i900_backlight_device = {
 };
 
 static struct pxafb_mode_info sgh_i900_mode = {
-	.pixclock		= 96153,
-	.xres			= 240,
-	.yres			= 400,
-	.bpp			= 16,
-	.hsync_len		= 8,
+	.pixclock	= 96153,
+	.xres		= 240,
+	.yres		= 400,
+	.bpp		= 16,
+	.hsync_len	= 8,
 	.left_margin	= 8,
 	.right_margin	= 8,
-	.vsync_len		= 4,
+	.vsync_len	= 4,
 	.upper_margin	= 38,
 	.lower_margin	= 38,
-	.sync			= 0,
+	.sync		= 0,
 };
 
 static struct pxafb_mach_info sgh_i900_lcd_info = {
@@ -172,11 +172,11 @@ static void __init sgh_i900_init(void)
 }
 
 MACHINE_START(SGH_I900, "Samsung SGH-i900 (Omnia) phone")
-	.phys_io		= 0x40000000,
+	.phys_io	= 0x40000000,
 	.boot_params	= 0xa0000100,
 	.io_pg_offst	= (io_p2v(0x40000000) >> 18) & 0xfffc,
-	.map_io			= pxa_map_io,
-	.init_irq		= pxa3xx_init_irq,
-	.timer			= &pxa_timer,
+	.map_io		= pxa_map_io,
+	.init_irq	= pxa3xx_init_irq,
+	.timer		= &pxa_timer,
 	.init_machine	= sgh_i900_init,
 MACHINE_END
